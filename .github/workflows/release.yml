@@ -1,0 +1,39 @@
+name: Publish GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build release packages
+        run: bash scripts/build-release.sh
+
+      - name: Verify release archives
+        run: |
+          unzip -t dist/*.zip
+          sha256sum -c dist/SHA256SUMS
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/*.zip \
+            dist/SHA256SUMS \
+            dist/RELEASE-METADATA.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "FindingX $GITHUB_REF_NAME" \
+            --generate-notes
