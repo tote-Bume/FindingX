@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-contrast="standard" data-motion="standard">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f5f9">
+<title>FindingX</title>
+<link rel="stylesheet" href="designsystem.css">
+<link rel="stylesheet" href="miuix.css">
+<link rel="stylesheet" href="themes.css">
+<link rel="stylesheet" href="themes-lab50.css">
+</head>
+<body>
+<div class="fx-wallpaper" id="wallpaper"></div>
+<div class="fx-scrim"></div>
+
+<!-- ===== 紧凑顶栏（不是大 Hero）===== -->
+<header class="fx-topbar">
+  <h1 class="fx-h1">Finding <em>XS</em></h1>
+  <span class="fx-micro fx-dim" id="appVer" style="margin-left:8px"></span>
+  <div class="fx-topactions">
+    <button class="fx-iconbtn fx-iconbtn--round" id="bDashRefresh" aria-label="刷新">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+    </button>
+  <button class="fx-iconbtn" id="bTopSettings" data-i18n-aria="a11y.settings" aria-label="打开设置">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+  </button>
+  </div>
+</header>
+
+<main class="fx-page" id="content">
+
+  <!-- ============ 仪表盘 ============ -->
+  <section id="page-dash" aria-label="仪表盘">
+
+    <div class="fx-card fx-card--err" id="connErr" hidden role="alert">
+      <div class="fx-card__title" style="margin-bottom:6px">无法连接模块后端</div>
+      <p class="fx-micro" id="connErrMsg" style="word-break:break-all"></p>
+      <p class="fx-micro fx-dim" id="connErrDiag"></p>
+      <p class="fx-micro fx-dim" style="margin-top:8px">
+        需要在支持模块 WebUI 的管理器中打开（KernelSU / APatch / WebUI-X / MMRL）。
+        请确认 FindingX 核心模块与 FindingX WebUI 扩展均已安装。
+      </p>
+    </div>
+
+    <h3 class="fx-sub">FindingX 能力值</h3>
+    <div class="fx-capability" role="img" aria-label="FindingX 系统能力雷达图">
+      <svg id="capRadar" viewBox="0 0 360 320" aria-hidden="true">
+        <g class="fx-radar-grid">
+          <polygon points="180,132 200.8,144 200.8,168 180,180 159.2,168 159.2,144" />
+          <polygon points="180,108 221.6,132 221.6,180 180,204 138.4,180 138.4,132" />
+          <polygon points="180,84 242.4,120 242.4,192 180,228 117.6,192 117.6,120" />
+          <polygon points="180,60 263.1,108 263.1,204 180,252 96.9,204 96.9,108" />
+        </g>
+        <g class="fx-radar-axis">
+          <line x1="180" y1="156" x2="180" y2="60"/><line x1="180" y1="156" x2="263" y2="108"/>
+          <line x1="180" y1="156" x2="263" y2="204"/><line x1="180" y1="156" x2="180" y2="252"/>
+          <line x1="180" y1="156" x2="97" y2="204"/><line x1="180" y1="156" x2="97" y2="108"/>
+        </g>
+        <polygon id="capRadarArea" class="fx-radar-area" points="180,156 180,156 180,156 180,156 180,156 180,156" />
+        <g id="capRadarDots" class="fx-radar-dots"></g>
+        <g class="fx-radar-labels">
+          <text x="180" y="37" text-anchor="middle">IFAS 内核</text><text x="285" y="101" text-anchor="start">帧调度</text>
+          <text x="285" y="218" text-anchor="start">GPU 稳定</text><text x="180" y="278" text-anchor="middle">线程调度</text>
+          <text x="75" y="218" text-anchor="end">SF 合成</text><text x="75" y="101" text-anchor="end">健康度</text>
+        </g>
+      </svg>
+      <div class="fx-capability__summary"><span id="capScore">—</span><small>系统能力</small></div>
+    </div>
+    <div class="fx-capability__legend" id="capLegend"></div>
+
+    <h3 class="fx-sub">引擎通道</h3>
+    <div class="fx-card">
+      <div class="fx-card__head">
+        <h2 class="fx-card__title" data-i18n="dash.kernel">内核通道</h2>
+      </div>
+      <div class="fx-kstate" id="kState">
+        <div class="fx-kstate__item" data-k="dev" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">perf_ioctl</span>
+          <span class="fx-kstate__v" id="sDev">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="ie" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">ifas_enable</span>
+          <span class="fx-kstate__v" id="sIe">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="egp" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">GPU 策略</span>
+          <span class="fx-kstate__v" id="sEgp">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="tid" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k" data-i18n="dash.tid">目标 tid</span>
+          <span class="fx-kstate__v fx-mono" id="sTid">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="er" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">engage / release</span>
+          <span class="fx-kstate__v fx-mono" id="sEr">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="ceil" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k" data-i18n="dash.ceil">频率上限</span>
+          <span class="fx-kstate__v" id="mCeil">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="kern" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">内核 · 策略</span>
+          <span class="fx-kstate__v fx-mono" id="sKern">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="scene" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">场景 · 触摸加速</span>
+          <span class="fx-kstate__v fx-mono" id="sScene">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="slope" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">负载斜率</span>
+          <span class="fx-kstate__v fx-mono" id="sSlope">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="gpu" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">GPU 波动干预</span>
+          <span class="fx-kstate__v fx-mono" id="sGpu">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="hawkTh" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">热状态</span>
+          <span class="fx-kstate__v fx-mono" id="sHawkTh">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="hawkBatt" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">电量</span>
+          <span class="fx-kstate__v fx-mono" id="sHawkBatt">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="hawk" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">HAWK 约束</span>
+          <span class="fx-kstate__v fx-mono" id="sHawk">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="thermal" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">温度降档</span>
+          <span class="fx-kstate__v fx-mono" id="sThermal">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="flow" data-ok="0" data-more="1" hidden>
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">帧节奏</span>
+          <span class="fx-kstate__v fx-mono" id="sFlow">—</span>
+        </div>
+      </div>
+      <button class="fx-moretoggle" id="bKMore" type="button" aria-expanded="false">
+        <span id="bKMoreLabel">展开更多</span>
+        <span class="fx-moretoggle__arrow" aria-hidden="true">▾</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ 配置 ============ -->
+  <section id="page-conf" hidden aria-label="配置">
+    <div class="fx-page__head">
+      <h1 class="fx-page__title" data-i18n="nav.conf">配置</h1>
+      <div class="fx-spacer"></div>
+      <button class="fx-btn fx-btn--ghost fx-btn--sm" id="bConfReload" data-i18n="conf.reload">重新加载</button>
+    </div>
+
+    <div class="fx-search fx-mb4" role="search">
+      <span class="fx-search__icon" aria-hidden="true">⌕</span>
+      <input id="inConfSearch" type="search" placeholder="搜索配置项" aria-label="搜索配置项">
+    </div>
+
+    <div id="confFormHost"></div>
+
+    <p class="fx-micro fx-dim fx-center fx-mt3" id="confStatus"></p>
+  </section>
+
+  <!-- 未保存变更浮条 -->
+  <div class="fx-savebar" id="saveBar" role="status" aria-live="polite" aria-hidden="true">
+    <span class="fx-savebar__text" id="saveBarText"></span>
+    <button class="fx-btn fx-btn--ghost fx-btn--sm" id="bConfDiscard" data-i18n="conf.discard">放弃</button>
+    <button class="fx-btn fx-btn--filled fx-btn--sm" id="bConfSave" data-i18n="common.save">保存</button>
+  </div>
+
+  <!-- ============ 日志 ============ -->
+  <section id="page-log" hidden aria-label="日志">
+    <div class="fx-page__head">
+      <h1 class="fx-page__title" data-i18n="nav.log">日志</h1>
+      <div class="fx-spacer"></div>
+      <button class="fx-iconbtn" id="bLogMore" aria-label="更多" aria-haspopup="menu">⋮</button>
+    </div>
+    <div class="fx-seg fx-mb3" role="group" aria-label="日志类型">
+      <button class="fx-seg__btn fx-on" data-log="fxd" aria-pressed="true">fxd</button>
+      <button class="fx-seg__btn" data-log="sf" aria-pressed="false">sf</button>
+      <button class="fx-seg__btn" data-log="fx" aria-pressed="false">fx</button>
+    </div>
+    <input class="fx-logfilter fx-mb3" id="inLogFilter" type="search"
+           placeholder="过滤关键词" aria-label="过滤日志">
+    <div id="logHost"></div>
+  </section>
+
+  <!-- ============ 目标应用（二级页）============ -->
+  <section id="page-apps" hidden aria-label="目标应用" data-immersive="true">
+    <div class="fx-page__head">
+      <button class="fx-iconbtn" id="bAppsBack" aria-label="返回">←</button>
+      <h1 class="fx-page__title">目标应用</h1>
+      <div class="fx-spacer"></div>
+      <span class="fx-badge fx-badge--secondary" id="appsCount">0</span>
+    </div>
+    <p class="fx-micro fx-dim" style="padding-inline:4px;margin:-4px 0 10px">
+      勾选后立即写入配置。全部取消 = 全局模式（tid=1）。
+    </p>
+    <div class="fx-field" style="margin-bottom:10px">
+      <input id="inAppSearch" class="fx-input" placeholder="搜索包名" autocomplete="off">
+    </div>
+    <div id="appsHost"></div>
+  </section>
+
+  <!-- ============ 设置（含关于/FAQ）============ -->
+  <section id="page-settings" data-immersive="true" hidden aria-label="设置">
+    <div class="fx-page__head">
+      <button class="fx-iconbtn" id="bSettingsBack" data-i18n-aria="a11y.back" aria-label="返回">←</button>
+      <h1 class="fx-page__title" data-i18n="settings.title">设置</h1>
+    </div>
+
+    <div class="fx-search fx-mb4" role="search">
+      <span class="fx-search__icon" aria-hidden="true">⌕</span>
+      <input id="inSettingsSearch" type="search" placeholder="搜索设置项" aria-label="搜索设置项">
+    </div>
+
+    <h2 class="fx-section" data-i18n="settings.fan">风扇</h2>
+    <div class="fx-card">
+      <div class="fx-optrow">
+        <div class="fx-optrow__text">
+          <div class="fx-label" data-i18n="settings.fan.enable">风扇控制</div>
+          <div class="fx-optrow__desc" data-i18n="settings.fan.enable.desc">关闭后交给系统温度曲线</div>
+        </div>
+        <button class="fx-toggle" id="fanToggle" type="button" role="switch" aria-checked="false">
+          <span class="fx-toggle__knob"></span>
+        </button>
+      </div>
+      <div class="fx-optrow">
+        <div class="fx-optrow__text">
+          <div class="fx-label" data-i18n="settings.fan.level">转速档位</div>
+          <div class="fx-optrow__desc" id="fanState">—</div>
+        </div>
+        <input type="range" id="fanLevel" class="fx-range" min="0" max="10" step="1" value="0">
+      </div>
+    </div>
+
+    <h2 class="fx-section" data-i18n="settings.appearance">外观</h2>
+    <div class="fx-card">
+<div class="fx-optrow">
+        <div class="fx-optrow__text"><div class="fx-label" data-i18n="settings.theme">主题</div></div>
+        <div class="fx-seg" role="group" data-setting="theme">
+          <button class="fx-seg__btn" data-val="light" data-i18n="settings.theme.light">浅色</button>
+          <button class="fx-seg__btn" data-val="dark" data-i18n="settings.theme.dark">深色</button>
+          <button class="fx-seg__btn" data-val="auto" data-i18n="settings.theme.auto">系统</button>
+        </div>
+      </div>
+      <div class="fx-optrow">
+        <div class="fx-optrow__text">
+          <div class="fx-label" data-i18n="settings.motion">动效</div>
+          <div class="fx-optrow__desc" data-i18n="settings.motion.desc">更有阻尼、更有弹性的弹簧曲线</div>
+        </div>
+        <div class="fx-seg" role="group" data-setting="motion">
+          <button class="fx-seg__btn" data-val="standard" data-i18n="settings.motion.standard">标准</button>
+          <button class="fx-seg__btn" data-val="spring" data-i18n="settings.motion.spring">实验</button>
+        </div>
+      </div>
+      <div class="fx-optrow">
+        <div class="fx-optrow__text"><div class="fx-label" data-i18n="settings.contrast">对比度</div></div>
+        <div class="fx-seg" role="group" data-setting="contrast">
+          <button class="fx-seg__btn" data-val="high" data-i18n="settings.contrast.high">高</button>
+          <button class="fx-seg__btn" data-val="standard" data-i18n="settings.contrast.standard">中</button>
+          <button class="fx-seg__btn" data-val="low" data-i18n="settings.contrast.low">低</button>
+        </div>
+      </div>
+      <div class="fx-optrow">
+        <div class="fx-optrow__text">
+          <div class="fx-label" data-i18n="settings.fontSize">字体大小</div>
+          <div class="fx-optrow__desc" data-i18n="settings.fontSize.desc">只缩放文字</div>
+        </div>
+        <div class="fx-seg" role="group" data-setting="fontScale">
+          <button class="fx-seg__btn" data-val="0.9" data-i18n="settings.size.s">小</button>
+          <button class="fx-seg__btn" data-val="1" data-i18n="settings.size.m">标准</button>
+          <button class="fx-seg__btn" data-val="1.1" data-i18n="settings.size.l">大</button>
+          <button class="fx-seg__btn" data-val="1.25" data-i18n="settings.size.xl">超大</button>
+        </div>
+      </div>
+      <div class="fx-optrow">
+        <div class="fx-optrow__text">
+          <div class="fx-label" data-i18n="settings.uiScale">显示大小</div>
+          <div class="fx-optrow__desc" data-i18n="settings.uiScale.desc">整体缩放界面</div>
+        </div>
+        <div class="fx-seg" role="group" data-setting="uiScale">
+          <button class="fx-seg__btn" data-val="0.9" data-i18n="settings.size.s">小</button>
+          <button class="fx-seg__btn" data-val="1" data-i18n="settings.size.m">标准</button>
+          <button class="fx-seg__btn" data-val="1.1" data-i18n="settings.size.l">大</button>
+          <button class="fx-seg__btn" data-val="1.2" data-i18n="settings.size.xl">超大</button>
+        </div>
+      </div>
+      <hr class="fx-hr">
+      <div class="fx-inline fx-wrap">
+        <button class="fx-btn fx-btn--tonal fx-btn--sm" id="bThemeExport" data-i18n="settings.export">导出主题</button>
+        <button class="fx-btn fx-btn--tonal fx-btn--sm" id="bThemeImport" data-i18n="settings.import">导入主题</button>
+      </div>
+    </div>
+
+    <h3 class="fx-sub" data-i18n="settings.wallpaper">壁纸</h3>
+    <div class="fx-card">
+      <div class="fx-optrow">
+        <div class="fx-optrow__text">
+          <div class="fx-label" data-i18n="settings.wallpaper.pick">选择图片</div>
+          <div class="fx-optrow__desc" data-i18n="settings.wallpaper.desc">文字颜色跟随壁纸明暗（4.5:1 保护）</div>
+        </div>
+      </div>
+      <div class="fx-inline fx-wrap">
+        <button class="fx-btn fx-btn--tonal fx-btn--sm" id="bWallpaperPick" data-i18n="settings.wallpaper.pick">选择图片</button>
+        <button class="fx-btn fx-btn--ghost fx-btn--sm" id="bWallpaperClear" data-i18n="settings.wallpaper.clear">清除</button>
+      </div>
+    </div>
+
+    <h3 class="fx-sub" data-i18n="settings.navbar">底栏</h3>
+    <div class="fx-card">
+      <div class="fx-optrow">
+        <div class="fx-optrow__text"><div class="fx-label" data-i18n="settings.navbar.style">风格</div></div>
+        <div class="fx-seg" role="group" data-setting="navbarStyle">
+          <button class="fx-seg__btn" data-val="liquid" data-i18n="settings.navbar.liquid">液态玻璃</button>
+          <button class="fx-seg__btn" data-val="flat" data-i18n="settings.navbar.flat">平铺</button>
+          <button class="fx-seg__btn" data-val="compact" data-i18n="settings.navbar.compact">紧凑</button>
+          <button class="fx-seg__btn" data-val="rail" data-i18n="settings.navbar.rail">侧栏</button>
+          <button class="fx-seg__btn" data-val="drawer" data-i18n="settings.navbar.drawer">抽屉</button>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="fx-section" data-i18n="faq.title">常见问题</h2>
+    <div class="fx-card">
+      <div id="faqHost"></div>
+    </div>
+
+    <button class="fx-moretoggle fx-mt4" id="bEnv" type="button" aria-expanded="false">
+      <span>环境</span>
+      <span class="fx-moretoggle__arrow" aria-hidden="true">▾</span>
+    </button>
+    <div class="fx-card fx-card--tight" id="envBox" hidden>
+      <div class="fx-kstate" id="envState">
+        <div class="fx-kstate__item" data-k="module" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">模块</span>
+          <span class="fx-kstate__v">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="backend" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">后端</span>
+          <span class="fx-kstate__v">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="fxd" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">引擎</span>
+          <span class="fx-kstate__v">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="ifas" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">内核</span>
+          <span class="fx-kstate__v">—</span>
+        </div>
+        <div class="fx-kstate__item" data-k="root" data-ok="0">
+          <span class="fx-kstate__dot" aria-hidden="true"></span>
+          <span class="fx-kstate__k">权限</span>
+          <span class="fx-kstate__v">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fx-mt4">
+      <button class="fx-btn fx-btn--danger fx-btn--block" id="bSettingsReset" data-i18n="settings.reset">恢复默认设置</button>
+    </div>
+  </section>
+</main>
+
+<!-- ===== 悬浮底栏（5 项）===== -->
+<nav class="fx-navbar" data-style="flat" data-icons="rounded" id="navbar" data-i18n-aria="a11y.nav" aria-label="主导航">
+  <div class="fx-drawer-grip" aria-hidden="true"><div class="fx-drawer-grip__bar"></div></div>
+  <div class="fx-navrow">
+    <button class="fx-navbtn" data-page="dash" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Zm0-13a5 5 0 1 0 5 5 5 5 0 0 0-5-5Zm0 8a3 3 0 1 1 3-3 3 3 0 0 1-3 3Z"/></svg>
+      <span data-i18n="nav.dash">首页</span>
+    </button>
+    <button class="fx-navbtn" data-page="conf">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.5a.5.5 0 0 0 .1-.7l-2-3.4a.5.5 0 0 0-.6-.2l-2.3 1a7.4 7.4 0 0 0-1.7-1L14.5 2.4A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.4L9 5.2a7.4 7.4 0 0 0-1.7 1l-2.3-1a.5.5 0 0 0-.6.2l-2 3.4a.5.5 0 0 0 .1.7L4.6 11a7.6 7.6 0 0 0 0 2l-2 1.5a.5.5 0 0 0-.1.7l2 3.4a.5.5 0 0 0 .6.2l2.3-1a7.4 7.4 0 0 0 1.7 1l.5 2.8a.5.5 0 0 0 .5.4h4a.5.5 0 0 0 .5-.4l.5-2.8a7.4 7.4 0 0 0 1.7-1l2.3 1a.5.5 0 0 0 .6-.2l2-3.4a.5.5 0 0 0-.1-.7ZM12 15a3 3 0 1 1 3-3 3 3 0 0 1-3 3Z"/></svg>
+      <span data-i18n="nav.conf">配置</span>
+    </button>
+    <button class="fx-navbtn" data-page="log">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 4h14v12H5Zm2 2h10v2H7Zm0 4h7v2H7Z"/></svg>
+      <span data-i18n="nav.log">日志</span>
+    </button>
+  </div>
+</nav>
+
+<script src="ui.js"></script>
+</body>
+</html>

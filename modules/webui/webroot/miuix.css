@@ -1,0 +1,495 @@
+/* FindingX visual overrides. */
+
+/* ---- 50.1 令牌重映射：MIUIX 色板与形态 ---- */
+:root {
+  /* MIUIX 圆角语言：更大更连续 */
+  --m3-r-xs: 8px;
+  --m3-r-s: 14px;
+  --m3-r-m: 18px;
+  --m3-r-l: 22px;
+  --m3-r-xl: 26px;
+  --m3-r-xxl: 30px;
+
+  /* MIUIX 动效：柔和弹性（替代 M3 机械 cubic） */
+  --m3-ease: cubic-bezier(0.34, 1.2, 0.44, 1);        /* 回弹 */
+  --m3-ease-emph: cubic-bezier(0.22, 1.14, 0.36, 1);  /* 强回弹 */
+  --m3-ease-shape: cubic-bezier(0.34, 1.2, 0.44, 1);
+
+  /* MIUIX 质感阴影：大而柔、带环境色 */
+  --m3-shadow-1: 0 2px 10px rgba(72, 84, 128, 0.07), 0 1px 3px rgba(72, 84, 128, 0.05);
+  --m3-shadow-2: 0 6px 22px rgba(72, 84, 128, 0.11), 0 2px 6px rgba(72, 84, 128, 0.06);
+  --m3-shadow-3: 0 14px 40px rgba(72, 84, 128, 0.16), 0 4px 12px rgba(72, 84, 128, 0.08);
+}
+
+/* ---- 50.2 浅色主题：雾面蓝紫（替代 M3 粉） ---- */
+:root,
+:root[data-theme="light"] {
+  --m3-primary: #5b7cfa;
+  --m3-on-primary: #ffffff;
+  --m3-primary-container: #e6ecff;
+  --m3-on-primary-container: #1a2f7a;
+  --m3-secondary: #7a7f96;
+  --m3-secondary-container: #eef0f7;
+  --m3-on-secondary-container: #24283d;
+  --m3-tertiary: #9d7ac0;
+  --m3-tertiary-container: #f1e9fa;
+  --m3-on-tertiary-container: #35204d;
+
+  --m3-surface: #f2f3f8;           /* 页面底：带蓝调的雾面 */
+  --m3-surface-1: #ffffff;
+  --m3-surface-2: #eceef6;
+  --m3-surface-3: #e2e5f0;
+  --m3-on-surface: #1c2030;
+  --m3-on-surface-var: #838aa3;
+  --m3-outline: #c5cadd;
+  --m3-outline-var: #e4e7f2;
+}
+
+/* ---- 50.3 深色主题：沉浸蓝夜（柔和非纯黑） ---- */
+:root[data-theme="dark"] {
+  --m3-primary: #8fa8ff;
+  --m3-on-primary: #12275e;
+  --m3-primary-container: #2a3d78;
+  --m3-on-primary-container: #dde5ff;
+  --m3-secondary: #a9b0c9;
+  --m3-secondary-container: #2c3247;
+  --m3-on-secondary-container: #e0e4f2;
+  --m3-tertiary: #c9a6e8;
+  --m3-tertiary-container: #45315e;
+  --m3-on-tertiary-container: #f0e2fb;
+
+  --m3-surface: #0f1117;           /* 沉浸蓝夜，非纯黑 */
+  --m3-surface-1: #1a1d27;
+  --m3-surface-2: #232735;
+  --m3-surface-3: #2d3243;
+  --m3-on-surface: #e9ebf4;
+  --m3-on-surface-var: #9299b0;
+  --m3-outline: #7e86a0;
+  --m3-outline-var: #2a2f40;
+  --m3-shadow-1: 0 2px 12px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --m3-shadow-2: 0 8px 28px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.35);
+  --m3-shadow-3: 0 16px 48px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- 50.4 壁纸层：柔和渐变雾面（去平涂塑料感） ---- */
+/* 无自定义壁纸时：双光斑渐变（蓝紫主色向，非常淡，移动端性能友好） */
+.fx-wallpaper {
+  background:
+    radial-gradient(120% 90% at 15% -5%, color-mix(in srgb, var(--m3-primary) 14%, transparent) 0%, transparent 55%),
+    radial-gradient(110% 80% at 90% 8%, color-mix(in srgb, var(--m3-tertiary) 10%, transparent) 0%, transparent 50%),
+    var(--m3-surface);
+  background-size: cover;
+  background-attachment: fixed;
+}
+.fx-scrim { opacity: 0; } /* 渐变面已足够柔，去掉黑色蒙版 */
+
+/* ---- 50.5 顶栏：轻玻璃质感（backdrop 模糊 + 半透明） ---- */
+.fx-topbar {
+  padding-block: var(--m3-s5) var(--m3-s3);
+}
+.fx-h1 {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(120deg, var(--m3-on-surface) 55%, var(--m3-primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.fx-h1 em { font-style: normal; color: inherit; }
+
+/* ---- 50.6 卡片：圆润浮起 + 呼吸边距 ---- */
+.fx-card {
+  border-radius: var(--m3-r-xl);
+  box-shadow: var(--m3-shadow-1);
+  padding: var(--m3-s5);
+  margin-block-end: var(--m3-s4);
+  border: 1px solid color-mix(in srgb, var(--m3-outline-var) 60%, transparent);
+}
+.fx-card__title {
+  font-size: var(--m3-fs-label);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--m3-primary);
+  text-transform: none; /* 去大写，MIUIX 用原字重 */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* 卡片标题左侧圆点装饰（柔和层次感，无图标依赖） */
+.fx-card__title::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--m3-primary);
+  opacity: 0.85;
+  flex: none;
+}
+.fx-card--err { border: none; border-radius: var(--m3-r-l); }
+
+/* ---- 50.7 状态环：渐变描边 + 更紧凑 ---- */
+.fx-ring {
+  width: 168px;
+  height: 168px;
+}
+.fx-ring__track {
+  stroke: color-mix(in srgb, var(--m3-primary) 12%, var(--m3-surface-2));
+  stroke-width: 10;
+}
+.fx-ring__wave {
+  stroke: url(#fx-ring-grad);
+  stroke-width: 10;
+  filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--m3-primary) 45%, transparent));
+}
+
+/* ---- 50.8 ringcard：柔和子卡 + hover 微浮 ---- */
+.fx-rings3 { gap: var(--m3-s3); }
+.fx-ringcard {
+  border-radius: var(--m3-r-l);
+  background: var(--m3-surface-1);
+  border: 1px solid color-mix(in srgb, var(--m3-outline-var) 55%, transparent);
+  box-shadow: var(--m3-shadow-1);
+  padding: var(--m3-s3) var(--m3-s2);
+  transition: transform var(--m3-dur-m) var(--m3-ease),
+              box-shadow var(--m3-dur-m) var(--m3-ease);
+}
+@media (hover: hover) {
+  .fx-ringcard:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--m3-shadow-2);
+  }
+}
+.fx-ringcard__ring {
+  background: conic-gradient(
+    from 180deg,
+    var(--m3-primary) calc(var(--pct, 0) * 1%),
+    var(--m3-tertiary) calc(var(--pct, 0) * 1.4%),
+    var(--m3-surface-2) calc(var(--pct, 0) * 1% + 2%)
+  );
+}
+.fx-ringcard__v { font-weight: 750; }
+
+/* ---- 50.9 kState：条目子卡化 + 呼吸感（信息分层核心） ---- */
+/* 修正 4.30.01:designsystem 基线是 grid 2 列(grid-template-columns:
+ * repeat(2,1fr)),旧 50.9 的 display:flex 在 grid 声明后不生效——条目
+ * 实际挤成 2 列网格。此处显式改回单列 flex(gap 6px 呼吸感),并提升
+ * 选择器特异性确保覆盖基线 grid。 */
+.fx-kstate#kState {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fx-kstate__item {
+  background: var(--m3-surface-2);
+  border-radius: var(--m3-r-s);
+  padding: 9px 12px;
+  transition: background var(--m3-dur-s) var(--m3-ease),
+              transform var(--m3-dur-s) var(--m3-ease);
+}
+.fx-kstate__item[data-ok="1"] {
+  background: color-mix(in srgb, var(--m3-primary) 6%, var(--m3-surface-2));
+}
+@media (hover: hover) {
+  .fx-kstate__item:hover {
+    background: var(--m3-surface-3);
+    transform: translateX(2px);
+  }
+}
+.fx-kstate__dot {
+  width: 7px;
+  height: 7px;
+  transition: background-color var(--m3-dur-m) var(--m3-ease),
+              box-shadow var(--m3-dur-m) var(--m3-ease);
+}
+.fx-kstate__item[data-ok="1"] .fx-kstate__dot {
+  box-shadow: 0 0 6px color-mix(in srgb, var(--m3-primary) 50%, transparent);
+}
+.fx-kstate__v { font-size: 12px; font-weight: 650; }
+
+/* ---- 50.10 徽章：胶囊渐变（状态条活力） ---- */
+.fx-badge {
+  padding: 4px 12px;
+  border-radius: var(--m3-r-full);
+  font-weight: 650;
+}
+.fx-badge--on {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--m3-success) 88%, white),
+    var(--m3-success));
+  color: #ffffff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--m3-success) 30%, transparent);
+}
+.fx-badge--primary {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--m3-primary) 90%, white),
+    var(--m3-primary));
+  color: #ffffff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--m3-primary) 30%, transparent);
+}
+.fx-badge--off { background: var(--m3-surface-2); }
+.fx-badge--err {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--m3-error) 90%, white),
+    var(--m3-error));
+  color: #ffffff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--m3-error) 28%, transparent);
+}
+
+/* ---- 50.11 分区分层：page 内区块间距呼吸感 ---- */
+.fx-page { padding-block-end: var(--m3-s6); }
+.fx-page__title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+.fx-page__head { margin-block-end: var(--m3-s4); }
+
+/* ---- 50.12 按钮：胶囊渐变主按钮（消硬块感） ---- */
+.fx-btn {
+  border-radius: var(--m3-r-full);
+  font-weight: 650;
+  transition: transform var(--m3-dur-s) var(--m3-ease),
+              box-shadow var(--m3-dur-s) var(--m3-ease),
+              background var(--m3-dur-s) var(--m3-ease);
+}
+.fx-btn:active { transform: scale(0.97); }
+.fx-btn--filled, .fx-btn--primary {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--m3-primary) 88%, white),
+    var(--m3-primary));
+  color: #ffffff;
+  box-shadow: 0 3px 12px color-mix(in srgb, var(--m3-primary) 32%, transparent);
+}
+.fx-btn--filled:active, .fx-btn--primary:active {
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--m3-primary) 22%, transparent);
+}
+.fx-btn--ghost {
+  background: var(--m3-surface-2);
+  color: var(--m3-on-surface);
+}
+.fx-btn--danger {
+  background: color-mix(in srgb, var(--m3-error) 10%, var(--m3-surface-1));
+  color: var(--m3-error);
+  border: 1px solid color-mix(in srgb, var(--m3-error) 30%, transparent);
+}
+
+/* ---- 50.13 输入/搜索：胶囊内凹质感 ---- */
+.fx-search, .fx-field {
+  background: var(--m3-surface-2);
+  border: 1px solid transparent;
+}
+.fx-search:focus-within, .fx-field:focus-within {
+  background: var(--m3-surface-1);
+  border-color: color-mix(in srgb, var(--m3-primary) 45%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--m3-primary) 14%, transparent);
+}
+
+/* ---- 50.14 分段控件：浮起滑块式（MIUIX 标志组件） ---- */
+.fx-seg {
+  background: var(--m3-surface-2);
+  border-radius: var(--m3-r-full);
+  padding: 3px;
+  gap: 2px;
+}
+.fx-seg__btn {
+  border-radius: var(--m3-r-full);
+  font-weight: 600;
+  transition: background var(--m3-dur-s) var(--m3-ease),
+              color var(--m3-dur-s) var(--m3-ease),
+              box-shadow var(--m3-dur-s) var(--m3-ease);
+}
+.fx-seg__btn[aria-pressed="true"], .fx-seg__btn.fx-on {
+  background: var(--m3-surface-1);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--m3-primary) 18%, transparent);
+  color: var(--m3-primary);
+}
+:root[data-theme="dark"] .fx-seg__btn[aria-pressed="true"],
+:root[data-theme="dark"] .fx-seg__btn.fx-on {
+  background: var(--m3-primary-container);
+  color: var(--m3-on-primary-container);
+  box-shadow: none;
+}
+
+/* ---- 50.15 开关：MIUIX 式圆润轨道 ---- */
+.fx-toggle {
+  border-radius: var(--m3-r-full);
+  background: var(--m3-surface-3);
+  transition: background var(--m3-dur-m) var(--m3-ease);
+}
+.fx-toggle[aria-checked="true"] {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--m3-primary) 88%, white),
+    var(--m3-primary));
+}
+
+/* ---- 50.16 nav 底栏：悬浮玻璃岛（MIUIX 标志布局） ---- */
+.fx-navbar {
+  border-radius: var(--m3-r-xl);
+  background: color-mix(in srgb, var(--m3-surface-1) 78%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: var(--m3-shadow-2);
+  border: 1px solid color-mix(in srgb, var(--m3-outline-var) 50%, transparent);
+}
+.fx-navbtn {
+  border-radius: var(--m3-r-l);
+  transition: background var(--m3-dur-s) var(--m3-ease),
+              color var(--m3-dur-s) var(--m3-ease);
+}
+.fx-navbtn[aria-current="page"] {
+  color: var(--m3-primary);
+  background: color-mix(in srgb, var(--m3-primary) 10%, transparent);
+}
+
+/* ---- 50.17 日志：终端质感但柔和（等宽+浅底圆角） ---- */
+.fx-logfilter {
+  background: var(--m3-surface-2);
+  border: none;
+  border-radius: var(--m3-r-full);
+  padding: 8px 16px;
+}
+#logHost, .fx-logview {
+  background: var(--m3-surface-1);
+  border-radius: var(--m3-r-m);
+  font-family: var(--m3-font-mono);
+  font-size: 11px;
+}
+
+/* ---- 50.19 衔接打磨(4.30.01):修复 miuix 与 designsystem 的风格断裂 ---- */
+
+/* 50.19a moretoggle:胶囊化 + hover 反馈(与胶囊语言统一) */
+.fx-moretoggle {
+  border-radius: var(--m3-r-full);
+  background: var(--m3-surface-2);
+  transition: background var(--m3-dur-s) var(--m3-ease),
+              color var(--m3-dur-s) var(--m3-ease);
+}
+.fx-moretoggle:hover { background: var(--m3-surface-3); color: var(--m3-primary); }
+.fx-moretoggle[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--m3-primary) 8%, var(--m3-surface-2));
+  color: var(--m3-primary);
+}
+
+/* 50.19b savebar:玻璃岛浮条(与 nav 底栏同语言) */
+.fx-savebar {
+  border-radius: var(--m3-r-full);
+  background: color-mix(in srgb, var(--m3-surface-1) 82%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: var(--m3-shadow-2);
+  border: 1px solid color-mix(in srgb, var(--m3-outline-var) 50%, transparent);
+  padding: 8px 8px 8px 16px;
+}
+
+/* 50.19c toast:胶囊玻璃(消息反馈与整体风格统一) */
+.fx-toast {
+  background: color-mix(in srgb, var(--m3-surface-1) 85%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow: var(--m3-shadow-2);
+  border: 1px solid color-mix(in srgb, var(--m3-outline-var) 45%, transparent);
+}
+
+/* 50.19d 分区标题统一:fx-sub 采用与 fx-section 同款主色风格,
+ * 消除仪表盘(fx-sub 灰)与设置页(fx-section 主色)的视觉断裂 */
+.fx-sub {
+  color: var(--m3-primary);
+  letter-spacing: 0.02em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fx-sub::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--m3-primary);
+  opacity: 0.75;
+  flex: none;
+}
+
+/* 50.19e optrow 去分隔线(MIUIX 靠间距分层,不靠线) */
+.fx-optrow + .fx-optrow { border-block-start: none; }
+.fx-optrow { border-radius: var(--m3-r-s); padding-inline: var(--m3-s2); }
+@media (hover: hover) {
+  .fx-optrow:hover { background: color-mix(in srgb, var(--m3-primary) 4%, transparent); }
+}
+
+/* 50.19f 对话框圆角统一(MIUIX 大圆角) */
+.fx-dialog { border-radius: var(--m3-r-xxl); }
+
+/* 50.19g 环境卡(envBox)与 kState 同风格衔接 */
+#envBox .fx-kstate { display: flex; flex-direction: column; gap: 6px; }
+
+/* 50.19h reduced-motion:表现层增强全归零(可访问性不变) */
+@media (prefers-reduced-motion: reduce) {
+  .fx-ring__wave { filter: none; }
+  .fx-ring__val { animation: none; }
+  .fx-ringcard, .fx-kstate__item, .fx-btn, .fx-card,
+  .fx-moretoggle, .fx-optrow { transition: none; animation: none; }
+}
+
+/* ---- 50.20 衔接打磨二轮(4.30.02):50.19 未覆盖的组件 ---- */
+
+/* 50.20a iconbtn:active 保持圆形收缩(修 M3 方角 r-m 与顶栏圆形脱节) */
+.fx-iconbtn:active { border-radius: var(--m3-r-full); }
+@media (hover: hover) {
+  .fx-iconbtn:hover { background: color-mix(in srgb, var(--m3-primary) 8%, transparent); color: var(--m3-primary); }
+}
+
+/* 50.20b toggle 旋钮:柔影层次(50.15 只覆盖了轨道渐变) */
+.fx-toggle__knob {
+  box-shadow: 0 2px 6px rgba(72, 84, 128, 0.25), 0 0 1px rgba(72, 84, 128, 0.3);
+}
+.fx-toggle[aria-checked="true"] .fx-toggle__knob {
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--m3-primary) 40%, transparent);
+}
+
+/* 50.20c logfilter:focus:胶囊光晕(修方形 outline 与光晕语言脱节) */
+.fx-logfilter:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--m3-primary) 45%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--m3-primary) 14%, transparent);
+}
+
+/* 50.20d .fx-log 视本体:柔和圆角+描边(50.17 只覆盖了 #logHost/.fx-logview) */
+.fx-log {
+  border-radius: var(--m3-r-m);
+  border: 1px solid color-mix(in srgb, var(--m3-outline-var) 50%, transparent);
+  box-shadow: var(--m3-shadow-1);
+}
+
+/* 50.20e numbox:按钮胶囊化+hover(数值增减控件对齐胶囊语言) */
+.fx-numbox__btn { border-radius: var(--m3-r-full); transition: background var(--m3-dur-s) var(--m3-ease), color var(--m3-dur-s) var(--m3-ease); }
+.fx-numbox__btn:active { background: color-mix(in srgb, var(--m3-primary) 12%, transparent); color: var(--m3-primary); }
+@media (hover: hover) {
+  .fx-numbox__btn:hover { background: color-mix(in srgb, var(--m3-primary) 8%, transparent); color: var(--m3-primary); }
+}
+
+/* 50.20f navbtn hover:桌面调试反馈(hover:hover 限定,不影响触屏) */
+@media (hover: hover) {
+  .fx-navbtn:not([aria-current="page"]):hover {
+    background: color-mix(in srgb, var(--m3-primary) 7%, transparent);
+    color: var(--m3-primary);
+  }
+}
+
+/* 50.20g badge warn/secondary 渐变(补齐 50.10 的胶囊渐变语言) */
+.fx-badge--warn {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--m3-warning) 88%, white),
+    var(--m3-warning));
+  color: #ffffff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--m3-warning) 30%, transparent);
+}
+.fx-badge--secondary {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--m3-secondary) 85%, white),
+    var(--m3-secondary));
+  color: #ffffff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--m3-secondary) 26%, transparent);
+}
+:root[data-theme="dark"] .fx-badge--warn { color: #1a1100; }
+:root[data-theme="dark"] .fx-badge--secondary { color: #12141c; }

@@ -1,0 +1,6 @@
+dist/
+_verify/
+__pycache__/
+.DS_Store
+*.tmp
+*.tmp.*
